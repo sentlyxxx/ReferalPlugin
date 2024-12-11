@@ -1,0 +1,17 @@
+name: ReferralSystem
+version: 1.0.0
+main: com.referral.plugin.ReferralSystem
+api-version: 1.21
+commands:
+  createreferral:
+    description: Создать реферальный код
+    usage: /createreferral
+  deletereferral:
+    description: Удалить реферальный код
+    usage: /deletereferral <код>
+  listreferrals:
+    description: Просмотреть все ваши реферальные коды
+    usage: /listreferrals
+  usereferral:
+    description: Использовать реферальный код
+    usage: /usereferral <код>
