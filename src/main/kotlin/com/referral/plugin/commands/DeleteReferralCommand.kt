@@ -7,31 +7,33 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bson.Document
 
-// Класс удаления рефки по индексу
 class DeleteReferralCommand : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (sender !is Player || args.isEmpty()) return false
-        val player = sender
+        if (sender !is Player || args.isEmpty()) {
+            sender?.sendMessage("Использование: /deleteReferral <индекс>")
+            return false
+        }
 
+        val player = sender
         val index = args[0].toIntOrNull()
-        if (index == null) {
-            player.sendMessage("Неверный индекс")
+
+        if (index == null || index < 1) {
+            player.sendMessage("Укажите корректный индекс реферального кода.")
             return true
         }
 
-        // Получаем список рефок игрока из бд
         val referrals = MongoDBHandler.getPlayerReferrals(player.uniqueId.toString())
-        if (index < 1 || index > referrals.size) {
-            player.sendMessage("Индекс вне диапазона")
+        if (index > referrals.size) {
+            player.sendMessage("Индекс вне диапазона. У вас есть только ${referrals.size} реферальных кодов.")
             return true
         }
 
         val codeToDelete = referrals[index - 1]["code"] as String
         val collection = MongoDBHandler.getCollection("referrals")
 
-        // Удаляем реф код из бд
+        // Удаляем реферальный код
         collection.deleteOne(Document("code", codeToDelete))
-        player.sendMessage("Ваш реферальный код успешно удален.")
+        player.sendMessage("Реферальный код с индексом $index успешно удалён.")
         return true
     }
 }
